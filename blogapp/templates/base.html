@@ -1,0 +1,82 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{super()}}
+    <link rel="shortcut icon" href="{{url_for('static',filename = 'facicon.ico') }}"">
+{#     <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> #}
+
+{% endblock %}
+
+
+{% block title%}
+    {% if title %}{{ title }}{% else %}Sengle{% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <div class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/index">森乐</a>
+            </div>
+    
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    {% if current_user.is_anonymous %}
+                        <li><a href="{{ url_for('auth.login') }}">登陆</a></li>
+                        <li><a href="{{ url_for('auth.register')}}">注册</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('auth.logout') }}">注销</a></li>
+                        <li><a class="" href="{{ url_for('main.user',username=current_user.username)}}">个人中心</a></li>
+                        <li><a href="{{ url_for('main.addpost') }}">发布文章</a></li>
+                    {% endif %}
+                </ul>
+                {% if g.search_form %}
+                    <form class="navbar-form navbar-right" method="get" action="{{url_for('main.search')}}">
+                        <div class="form-group">
+                            {{ g.search_form.q(size=20,class='form-control',placeholder=g.search_form.q.label.text )}}                        
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>  
+    </div>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="col-md-4"></div>   
+    </div>
+    {% block app_content %}{% endblock %}
+</div>     
+{% endblock %}
+{# 
+{% block scripts%}
+{{super()}}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% endblock%} #}
+

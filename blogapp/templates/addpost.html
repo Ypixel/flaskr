@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-8 text-center">
+		
+{# 		<h1>Continue</h1>
+    	<h1>Hi, {{ current_user.username }}!</h1> #}
+    	{% if form %}
+            {{ wtf.quick_form(form) }}
+            <br>
+    	{% endif %}	
+    </div>
+	<div class="col-md-2"></div>
+</div>
+{% endblock %}
