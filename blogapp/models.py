@@ -108,6 +108,13 @@ class Post(SearchableMixin,db.Model):
 	body = db.Column(db.String(140))
 	timestamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
 	user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
+
+	@staticmethod
+	def delete(post=None,id=None):
+		if post is None:
+			post = Post.query.filter_by(id=id).first()
+		db.session.delete(post)
+		db.session.commit()
 	
 	def __repr__(self):
 		return '<Post {}>'.format(self.body)

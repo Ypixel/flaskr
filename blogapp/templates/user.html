@@ -3,25 +3,38 @@
 {% block app_content%}
 <div class="row">
 	<div class="col-md-2"></div>
-	<div class="col-md-8 text-center">
-		<img src="{{user.avatar(256)}}">
-		<h1>{{ user.username}}</h1>
-    	<h1>Hi, {{ current_user.username }}!</h1>
-    	<h1>{% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}</h1>
-    	<h1>{% if user.last_seen %}<p>Last seen on: {{ user.last_seen}}</p>{% endif %}</h1>
-    	<p>{{user.followers.count()}}  followers,{{user.followed.count() }} following.</p>\
-    	{% if current_user.is_anonymous %}
-    	{% else %}
-    		{% if user == current_user %}
-    			<h1><a href="{{ url_for('main.edit_profile')}}">Edit your profile</a></h1>
-    		{% elif not current_user.is_following(user) %}
-    			<p><a href="{{ url_for('main.follow',username = user.username) }}">Follow</a></p>
-    		{% else %}
-    			<p><a href="{{ url_for('main.unfollow',username = user.username)}}">Unfollow</a></p>
-    		{% endif %}
-    		<hr>
-    	{% endif %}
-    	
+	<div class="col-md-8">
+        <div class="panel panel-default well">
+            <div class="panel-heading">用户中心</div>
+            <div class="panel-body">
+                <table>
+                <tr>
+                    <td width="220px" class="text-center">
+                        <img src="{{user.avatar(150)}}">
+                        <p>粉丝:{{user.followers.count()}}    关注:{{user.followed.count() }}</p>
+                        <h2>{{ user.username}}</h2>
+                    </td>
+                    <td>
+                        <p>个性签名：{% if user.about_me %}{{user.about_me}}{% endif %}</p>
+                        {% if user.last_seen %}<p>上次访问时间:{{ moment(user.last_seen).format('LLLL')}}</p>{% endif %}
+                        <br>
+                        {% if current_user.is_anonymous %}
+                        {% else %}
+                            {% if user == current_user %}
+                                <a class="btn btn-default" href="{{ url_for('main.edit_profile')}}" role="button">编辑个人资料</a>
+                            {% elif not current_user.is_following(user) %}
+                                <a class="btn btn-default" href="{{ url_for('main.follow',username = user.username) }}" role="button">关注</a>
+                            {% else %}
+                                <a class="btn btn-default" href="{{url_for('main.unfollow',username = user.username)}}" role="button">取消关注</a>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                </table>
+            </div>
+        </div>
+<hr>
+		
     	{% for post in posts %}
     		{% include '_post.html' %}
     	{% endfor %}

@@ -96,10 +96,10 @@ def unfollow(username):
     current_user.unfollow(user)
     db.session.commit()
     flash('You are not following {}.'.format(username))
-    return redirect(url_for('mian.user', username=username))
+    return redirect(url_for('main.user', username=username))
 
 @bp.route('/search')
-@login_required
+# @login_required
 def search():
 	if not g.search_form.validate():
 		return redirect(url_for('main.explore'))
@@ -108,37 +108,15 @@ def search():
 	next_url = url_for('main.search',q=g.search_form.q.data,page=page + 1) if total > page * current_app.config['POST_PER_PAGE'] else None
 	prev_url = url_for('main.user',q=g.search_form.q.data,page=page - 1) if page > 1 else None
 	return render_template('search.html',title='Search',posts=posts,next_url=next_url,prev_url=prev_url)
-# @app.route('/new', methods=['GET', 'POST'])
-# def new_post():
-#     """View function for new_port."""
-#     form = PostForm()
-#     if form.validate_on_submit():
-#     	new_post = Post(id=str(uuid4()), title=form.title.data)
-#     	new_post.body = form.text.data
-#     	new_post.timestamp = datetime.now()
 
-# 		db.session.add(new_post)
-# 		db.session.commit()
-# 		return redirect(url_for('blog.home'))
-# 	return render_template('new_post.html',form=form)
-
-# @app.route('/edit/<string:id>', methods=['GET', 'POST'])
-# def edit_post(id):
-#     """View function for edit_post."""
-#     post = Post.query.get_or_404(id)
-#     form = PostForm()
-
-#     if form.validate_on_submit():
-#     	post.title = form.title.data
-#     	post.body = form.text.data
-#     	post.timestamp = datetime.now()
-		
-# 		# Update the post
-# 		db.session.add(post)
-# 		db.session.commit()
-# 		return redirect(url_for('blog.post', post_id=post.id))
-
-# 	form.title.data = post.title
-# 	form.body.data = post.text
-#     return render_template('edit_post.html', form=form, post=post)
+@bp.route('/delete_post')
+@login_required
+def delete_post():
+	try:
+		post_id = request.args.get('post_id',type=int)
+	except:
+		flash('delete post failed')
+	Post.delete(id = post_id)
+	flash('delete post success')
+	return redirect(url_for('main.index'))
 

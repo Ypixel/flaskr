@@ -8,6 +8,9 @@
         <a href="{{ url_for('main.user', username=post.author.username) }}">{{ post.author.username }}</a>
         </p>
     </h4>
+    {% if current_user.username and current_user.username=='admin' %}
+    <a class="btn btn-danger" href="{{url_for('main.delete_post',post_id=post.id)}}" role="button">delete</a>
+    {% endif %}
   </div>
 </div>
 
