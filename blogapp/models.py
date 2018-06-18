@@ -4,6 +4,9 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from hashlib import md5
+from mistune import markdown
+import bleach
+import re
 
 class SearchableMixin(object):
     @classmethod
@@ -103,10 +106,15 @@ def load_user(id):
 	return User.query.get(int(id))
 
 class Post(SearchableMixin,db.Model):
-	__searchable__ = ['body']
+	__searchable__ = ['body','title']
 	id = db.Column(db.Integer,primary_key=True)
-	body = db.Column(db.String(140))
+	title = db.Column(db.String(80),nullable=False)
+	body = db.Column(db.Text,nullable=False)
+	body_html = db.Column(db.Text)
+	summary = db.Column(db.Text)
+	body_summary = db.Column(db.Text)
 	timestamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
+	html_body = db.Column(db.Text)
 	user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
 
 	@staticmethod
@@ -115,9 +123,18 @@ class Post(SearchableMixin,db.Model):
 			post = Post.query.filter_by(id=id).first()
 		db.session.delete(post)
 		db.session.commit()
-	
+
+	@staticmethod
+	def on_body_change(target,value,oldvalue,initiator):
+		allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code','em', 'i', 'li', 'ol', 'pre', 'strong', 'ul','h1', 'h2', 'h3', 'p']
+		attrs = { '*':['class'],}
+		target.body_html = bleach.linkify(bleach.clean(markdown(value), tags=allowed_tags, strip=True, attributes=attrs))
+		pattern = re.compile(r'<[^>]+>', re.S)
+		summary = pattern.sub('', target.body_html)
+		summary = (summary[0:40] + '...') if len(summary) >= 40 else summary
+		target.body_summary = summary
+
 	def __repr__(self):
-		return '<Post {}>'.format(self.body)
+		return '<Post {}>'.format(self.title)
 
-
-
+db.event.listen(Post.body,'set',Post.on_body_change)

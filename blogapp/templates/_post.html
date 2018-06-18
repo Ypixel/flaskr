@@ -1,7 +1,10 @@
 <div class="panel panel-default">
   <div class="panel-body">
-    <h3 class="text-center">{{ post.body }}</h3>
+    <h3 class="text-center">{{ post.title }}</h3>
     <hr>
+    <p class="text-center">{{ post.body_summary}}</p>
+    <center><a href="{{ url_for('main.article_details', article_id=post.id) }}" class="btn btn-default text-center">查看全文</a></center>
+
     <h4 class="text-right">
         <p>By:
         <a href="{{ url_for('main.user', username=post.author.username) }}"><img src="{{ post.author.avatar(20) }}" /></a>

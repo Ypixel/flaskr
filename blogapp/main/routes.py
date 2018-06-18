@@ -26,12 +26,13 @@ def index():
 	prev_url = url_for('main.index',page=posts.prev_num) if posts.has_prev else None
 	return render_template('index.html',posts=posts.items,next_url=next_url,prev_url=prev_url)
 
+
 @bp.route('/addpost',methods=['GET','POST'])
 @login_required
 def addpost():
 	form = PostForm()
 	if form.validate_on_submit():
-		post = Post(body=form.post.data, author=current_user)
+		post = Post(title=form.title.data,body=form.body.data, author=current_user)
 		db.session.add(post)
 		db.session.commit()
 		flash('Your post is now live')
@@ -50,6 +51,13 @@ def user(username):
 	return render_template('user.html',user=user,posts=posts.items,next_url=next_url,prev_url=prev_url)
 
 
+@bp.route('/articles/<article_id>')
+def article_details(article_id):
+	post = Post.query.filter_by(id=article_id).first()
+	db.session.commit()
+	return render_template('article_details.html',post=post)
+
+
 
 
 @bp.route('/edit_profile',methods=['GET','POST'])
@@ -66,6 +74,7 @@ def edit_profile():
 		form.username.data = current_user.username
 		form.about_me.data = current_user.about_me
 	return render_template('edit_profile.html',title='Edit Profile',form=form)
+
 
 @bp.route('/follow/<username>')
 @login_required

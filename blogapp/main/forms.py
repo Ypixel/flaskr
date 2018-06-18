@@ -20,8 +20,8 @@ class EditProfileForm(FlaskForm):
                 raise ValidationError('Please use a different username.') 
 
 class PostForm(FlaskForm):
-    """Post Form"""
-    post = TextAreaField('Say something',validators=[DataRequired(),Length(min=0,max=140)])
+    title = StringField('Titile',validators=[DataRequired()])
+    body = TextAreaField('Say something',validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class SearchForm(FlaskForm):
