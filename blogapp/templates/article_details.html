@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title%}
+{{super()}}
+--{{post.title}}
+{% endblock %}
+
+{% block app_content %}
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
+		<h1 class="text-center">{{post.title}}</h1><br>
+		{{post.body_html|safe}}
+	</div>
+	<div class="col-md-2"></div>
+</div>
+{% endblock%}
